@@ -35,5 +35,3 @@ from google.colab import files
 uploaded = files.upload()
 
 results = model(image_path)
-
-
