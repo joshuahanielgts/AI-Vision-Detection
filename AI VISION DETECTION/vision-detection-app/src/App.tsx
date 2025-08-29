@@ -5,6 +5,8 @@ import LoadingSpinner from './components/LoadingSpinner';
 import SampleImage from './components/SampleImage';
 import { detectObjects, Detection } from './services/detectionService';
 
+import ThemeToggle from './ThemeToggle';
+
 function App() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageName, setImageName] = useState<string | null>(null);
@@ -14,19 +16,16 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   const handleImageUpload = async (file: File) => {
-    // Reset previous results
     setDetections([]);
     setError(null);
     setIsLoading(true);
     setLoadingMessage('Loading model and processing image...');
 
     try {
-      // Create a local URL for the uploaded image
       const localUrl = URL.createObjectURL(file);
       setImageUrl(localUrl);
       setImageName(file.name);
 
-      // Process the image with the detection service
       const results = await detectObjects(file);
       setDetections(results);
 
@@ -53,7 +52,6 @@ function App() {
     setIsLoading(true);
     setLoadingMessage('Loading model and processing image...');
 
-    // Create a fake File object from the URL
     fetch(url)
       .then((res) => res.blob())
       .then((blob) => {
@@ -79,31 +77,37 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-10">
+    <div className="min-h-screen bg-background text-foreground pb-10">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <h1 className="text-center text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-            AI Vision Detection
-          </h1>
-          <p className="mt-2 text-center text-sm text-gray-600 sm:text-base">
-            Upload an image and get real-time object detection results
-          </p>
+      <header className="bg-card shadow-sm">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          {/* Left: Title & subtitle */}
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              AI Vision Detection
+            </h1>
+            <p className="mt-1 text-sm sm:text-base text-muted-foreground">
+              Upload an image and get real-time object detection results
+            </p>
+          </div>
+
+          {/* Right: Theme toggle */}
+          <ThemeToggle />
         </div>
       </header>
 
       {/* Main Content */}
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded-lg bg-white p-6 shadow-md">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">Upload Image</h2>
+        <div className="rounded-lg bg-card text-card-foreground p-6 shadow-md">
+          <h2 className="mb-4 text-xl font-semibold">Upload Image</h2>
           <ImageUploader onImageUpload={handleImageUpload} />
           <SampleImage onSampleImageSelect={handleSampleImageSelect} />
 
           {/* Preview */}
           {imageUrl && !isLoading && !error && detections.length === 0 && (
             <div className="mt-6">
-              <h3 className="mb-2 text-lg font-medium text-gray-700">Preview</h3>
-              <div className="flex justify-center rounded-lg border border-gray-200 p-4">
+              <h3 className="mb-2 text-lg font-medium">Preview</h3>
+              <div className="flex justify-center rounded-lg border border-border p-4">
                 <img
                   src={imageUrl}
                   alt={imageName || 'Uploaded image'}
@@ -118,7 +122,7 @@ function App() {
 
           {/* Error Message */}
           {error && (
-            <div className="mt-6 rounded-lg bg-red-50 p-4 text-red-700">
+            <div className="mt-6 rounded-lg bg-destructive/10 p-4 text-destructive-foreground">
               <p>{error}</p>
             </div>
           )}
@@ -131,9 +135,9 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 border-t border-gray-200 bg-white">
+      <footer className="mt-16 border-t border-border bg-card text-muted-foreground">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm">
             AI Vision Detection App - Powered by TensorFlow.js with COCO-SSD Model
           </p>
         </div>
